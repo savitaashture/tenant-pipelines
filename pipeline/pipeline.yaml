@@ -46,7 +46,7 @@ spec:
               jq -r '.spec.components[].containerImage' "$file"
 
               match_words=("openshift-pipelines-pipelines-triggers-webhook-rhel8" "openshift-pipelines-pipelines-triggers-controller-rhel8" 
-              "openshift-pipelines-pipelines-triggers-core-interceptors-rhel8", "openshift-pipelines-pipelines-triggers-eventlistenersink-rhel8")
+              "openshift-pipelines-pipelines-triggers-core-interceptors-rhel8" "openshift-pipelines-pipelines-triggers-eventlistenersink-rhel8")
 
               echo "Adding container image starts now****************"
               container_images=()
