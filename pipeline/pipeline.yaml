@@ -41,21 +41,6 @@ spec:
               cat /tmp/snapshot.json
               file="/tmp/snapshot.json"
               echo "After*********************"
-              
-              echo "******** STARTED INSTALLING DOCKER ******"
-              dnf -y update
-              dnf -y install ca-certificates
-              dnf -y install curl
-              dnf -y install sudo
-              dnf -y install git
-              dnf -y install device-mapper-persistent-data
-              dnf -y install lvm2
-              curl -fsSL https://download.docker.com/linux/fedora/gpg | sudo tee /etc/apt/trusted.gpg.d/docker.asc > /dev/null
-              curl -fsSL https://download.docker.com/linux/fedora/docker-ce.repo | sudo tee /etc/yum.repos.d/docker-ce.repo > /dev/null
-              dnf -y install docker-ce-cli
-              
-              echo "******** INSTALLING DOCKER DONE ******"
-
 
               jq '.spec.components' "$file"
               jq -r '.spec.components[].containerImage' "$file"
@@ -94,12 +79,13 @@ spec:
                       new_image="quay.io/openshift-pipelines/$match_word@sha256:$sha256"
 
                       # Tag the image (using docker tag, assuming the original image is locally available)
-                      echo "Tagging $container_image as $new_image"
-                      docker tag "$container_image" "$new_image"
+                      # echo "Tagging $container_image as $new_image"
+                      # docker tag "$container_image" "$new_image"
 
                       # Push the new image to the registry
                       echo "Pushing Docker image: $new_image"
-                      docker push "$new_image"
+                      # docker push "$new_image"
+                      skopeo copy docker://"$container_image" docker://"$new_image"
                   fi
                 done
               done
