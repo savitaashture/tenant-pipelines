@@ -72,7 +72,7 @@ spec:
 
                   # Check if the word before sha256 matches the specified match_word
                   echo "BEFORE THE IF COND"
-                  if [[ "$last_word" =~ $match_word ]]; then
+                  if [[ "$match_word" =~ $last_word ]]; then
                       # Construct the new image name with the new registry
                       echo "ITS NOT coming here"
                       new_image="quay.io/openshift-pipelines/$match_word@sha256:$sha256"
