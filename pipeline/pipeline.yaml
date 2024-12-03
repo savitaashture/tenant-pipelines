@@ -36,4 +36,8 @@ spec:
               set -eo pipefail
 
               echo $(params.RELEASED_VERSION)
-              get-resource "snapshot" $(params.SNAPSHOT)
+              get-resource "snapshot" $(params.SNAPSHOT) > /tmp/snapshot.yaml
+              echo "Before********************"
+              cat /tmp/snapshot.yaml
+              echo "After*********************"
+              
