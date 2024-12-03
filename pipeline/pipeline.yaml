@@ -41,6 +41,22 @@ spec:
               cat /tmp/snapshot.json
               file="/tmp/snapshot.json"
               echo "After*********************"
+              
+              echo "******** STARTED INSTALLING DOCKER ******"
+              dnf -y update
+              dnf -y install ca-certificates
+              dnf -y install curl
+              dnf -y install sudo
+              dnf -y install git
+              dnf -y install device-mapper-persistent-data
+              dnf -y install lvm2
+              curl -fsSL https://download.docker.com/linux/fedora/gpg | sudo tee /etc/apt/trusted.gpg.d/docker.asc > /dev/null
+              curl -fsSL https://download.docker.com/linux/fedora/docker-ce.repo | sudo tee /etc/yum.repos.d/docker-ce.repo > /dev/null
+              dnf -y install docker-ce-cli
+              
+              echo "******** INSTALLING DOCKER DONE ******"
+
+
               jq '.spec.components' "$file"
               jq -r '.spec.components[].containerImage' "$file"
 
@@ -62,9 +78,9 @@ spec:
 
               # Loop through the array and check the condition
               for container_image in "${container_images[@]}"; do
-                # Extract the word before sha256 and the SHA value
                 echo "printing one by one container images"
                 echo $container_image
+                # Extract the word before sha256 and the SHA value
                 last_word=$(echo "$container_image" | sed -E 's|.*/([^/]+)@sha256:.*|\1|')
                 sha256=$(echo "$container_image" | sed -E 's|.*@sha256:([^ ]*)|\1|')
                 
@@ -73,8 +89,8 @@ spec:
                   # Check if the word before sha256 matches the specified match_word
                   echo "BEFORE THE IF COND"
                   if [[ "$match_word" =~ $last_word ]]; then
-                      # Construct the new image name with the new registry
                       echo "ITS NOT coming here"
+                      # Construct the new image name with the new registry
                       new_image="quay.io/openshift-pipelines/$match_word@sha256:$sha256"
 
                       # Tag the image (using docker tag, assuming the original image is locally available)
