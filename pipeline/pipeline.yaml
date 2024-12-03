@@ -36,8 +36,10 @@ spec:
               set -eo pipefail
 
               echo $(params.RELEASED_VERSION)
-              get-resource "snapshot" $(params.SNAPSHOT) > /tmp/snapshot.yaml
+              get-resource "snapshot" $(params.SNAPSHOT) > /tmp/snapshot.json
               echo "Before********************"
-              cat /tmp/snapshot.yaml
+              cat /tmp/snapshot.json
+              file="/tmp/snapshot.json"
               echo "After*********************"
+              jq '.spec.components' "$file"
               
