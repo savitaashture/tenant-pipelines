@@ -76,7 +76,7 @@ spec:
                   if [[ "$match_word" =~ $last_word ]]; then
                       echo "ITS NOT coming here"
                       # Construct the new image name with the new registry
-                      new_image="quay.io/openshift-pipeline/$match_word@sha256:$sha256"
+                      new_image="quay.io/openshift-pipeline/$match_word:next"
 
                       # Tag the image (using docker tag, assuming the original image is locally available)
                       # echo "Tagging $container_image as $new_image"
