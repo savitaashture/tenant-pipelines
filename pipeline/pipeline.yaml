@@ -85,7 +85,7 @@ spec:
                       # Push the new image to the registry
                       echo "Pushing Docker image: $new_image"
                       # docker push "$new_image"
-                      skopeo copy docker://"$container_image" docker://"$new_image"
+                      skopeo copy docker://"$container_image" docker://"$new_image" --all
                   fi
                 done
               done
