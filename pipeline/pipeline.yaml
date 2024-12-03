@@ -42,4 +42,5 @@ spec:
               file="/tmp/snapshot.json"
               echo "After*********************"
               jq '.spec.components' "$file"
+              jq -r '.spec.components[].containerImage' "$file"
               
