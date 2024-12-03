@@ -43,4 +43,44 @@ spec:
               echo "After*********************"
               jq '.spec.components' "$file"
               jq -r '.spec.components[].containerImage' "$file"
+
+              match_words=("openshift-pipelines-pipelines-triggers-webhook-rhel8" "openshift-pipelines-pipelines-triggers-controller-rhel8" 
+              "openshift-pipelines-pipelines-triggers-core-interceptors-rhel8", "openshift-pipelines-pipelines-triggers-eventlistenersink-rhel8")
+
+              echo "Adding container image starts now****************"
+              container_images=()
+
+              while IFS= read -r image; do
+              container_images+=("$image")
+              done < <(jq -r '.spec.components[].containerImage' "$file")
+
+              # Print the array (optional, for testing)
+              echo "Container images: ${container_images[@]}"
+
+              echo "*****Printing Done********"
               
+
+              # Loop through the array and check the condition
+              for container_image in "${container_images[@]}"; do
+                # Extract the word before sha256 and the SHA value
+                last_word=$(echo "$container_image" | sed -E 's|.*/([^/]+)@sha256:.*|\1|')
+                sha256=$(echo "$container_image" | sed -E 's|.*@sha256:([^ ]*)|\1|')
+                
+                for match_word in "${match_words[@]}"; do
+
+                  # Check if the word before sha256 matches the specified match_word
+                  if [[ "$last_word" =~ $match_word ]]; then
+                      # Construct the new image name with the new registry
+                      new_image="quay.io/openshift-pipelines/$match_word@sha256:$sha256"
+
+                      # Tag the image (using docker tag, assuming the original image is locally available)
+                      echo "Tagging $container_image as $new_image"
+                      docker tag "$container_image" "$new_image"
+
+                      # Push the new image to the registry
+                      echo "Pushing Docker image: $new_image"
+                      docker push "$new_image"
+                  fi
+                done
+              done
+
