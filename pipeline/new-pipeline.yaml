@@ -63,7 +63,7 @@ spec:
                       # Construct the new image name with the new registry
                       new_image="quay.io/openshift-pipeline/$match_word:next"
                       echo "Pushing Docker image: $new_image"
-                      skopeo copy docker://"$container_image" docker://"$new_image" --all
+                      skopeo copy docker://"$container_image" docker://"$new_image" --all --preserve-digests
                   fi
                 done
               done
