@@ -61,11 +61,12 @@ spec:
                 # sha256=$(echo "$container_image" | sed -E 's|.*@sha256:([^ ]*)|\1|')
                 
                 echo "before"
-                echo $last_word
+                echo $extracted
                 echo "after"
                 for match_word in "${match_words[@]}"; do
                   # Check if the word before sha256 matches the specified match_word
                   # if [[ "$match_word" =~ $last_word ]]; then
+                  echo "inside for loop"
                   if [[ "$match_word" =~ $firstWord && "$match_word" =~ $secondWord ]]; then
                       # Construct the new image name with the new registry
                       new_image="quay.io/openshift-pipeline/$match_word:next"
