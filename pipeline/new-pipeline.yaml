@@ -55,7 +55,7 @@ spec:
               for container_image in "${container_images[@]}"; do
                 # Extract the word before sha256 to match with the container image to push
                 # last_word=$(echo "$container_image" | sed -E 's|.*/([^/]+)@sha256:.*|\1|')
-                extracted=$(echo "$container_image" | sed -E 's|.*/([^/]+)/([^@]+)@sha256:.*|\1 \2|'')
+                extracted=$(echo "$container_image" | sed -E 's|.*/([^/]+)/([^@]+)@sha256:.*|\1 \2|')
                 firstWord=$(echo "$extracted" | awk '{print $1}')
                 secondWord=$(echo "$extracted" | awk '{print $2}')
                 # sha256=$(echo "$container_image" | sed -E 's|.*@sha256:([^ ]*)|\1|')
