@@ -62,6 +62,8 @@ spec:
                 
                 echo "before"
                 echo $extracted
+                echo $firstWord
+                echo $secondWord
                 echo "after"
                 for match_word in "${match_words[@]}"; do
                   # Check if the word before sha256 matches the specified match_word
