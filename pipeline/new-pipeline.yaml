@@ -38,10 +38,12 @@ spec:
               get-resource "snapshot" $(params.SNAPSHOT) > /tmp/snapshot.json
               cat /tmp/snapshot.json
               file="/tmp/snapshot.json"
-              container_images=()
-              while IFS= read -r image; do
-              container_images+=("$image")
-              done < <(jq -r '.spec.components[].containerImage' "$file")
+              #container_images=()
+              #while IFS= read -r image; do
+              #container_images+=("$image")
+              #done < <(jq -r '.spec.components[].containerImage' "$file")
+
+              container_images=($(jq -r '.spec.components[].containerImage' "$file"))
 
 
               for container_image in "${container_images[@]}"; do
