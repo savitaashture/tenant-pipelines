@@ -45,6 +45,7 @@ spec:
 
 
               for container_image in "${container_images[@]}"; do
-                new_image=$(echo "$container_image" | sed "s|quay.io/redhat-user-workloads/tekton-ecosystem-tenant/|quay.io/openshift-pipeline/|"):next
+                image=$(echo "$container_image" | sed "s|quay.io/redhat-user-workloads/tekton-ecosystem-tenant|quay.io/openshift-pipeline|")
+                new_image=$(echo "$image" | sed 's/@sha256:.*//'):next
                 skopeo copy docker://"$container_image" docker://"$new_image" --all --preserve-digests
               done
