@@ -54,12 +54,19 @@ spec:
               done < <(jq -r '.spec.components[].containerImage' "$file")
               for container_image in "${container_images[@]}"; do
                 # Extract the word before sha256 to match with the container image to push
-                last_word=$(echo "$container_image" | sed -E 's|.*/([^/]+)@sha256:.*|\1|')
+                # last_word=$(echo "$container_image" | sed -E 's|.*/([^/]+)@sha256:.*|\1|')
+                extracted=$(echo "$container_image" | sed -E 's|.*/([^/]+)/([^@]+)@sha256:.*|\1 \2|'')
+                firstWord=$(echo "$extracted" | awk '{print $1}')
+                secondWord=$(echo "$extracted" | awk '{print $2}')
                 # sha256=$(echo "$container_image" | sed -E 's|.*@sha256:([^ ]*)|\1|')
                 
+                echo "before"
+                echo $last_word
+                echo "after"
                 for match_word in "${match_words[@]}"; do
                   # Check if the word before sha256 matches the specified match_word
-                  if [[ "$match_word" =~ $last_word ]]; then
+                  # if [[ "$match_word" =~ $last_word ]]; then
+                  if [[ "$match_word" =~ $firstWord && "$match_word" =~ $secondWord ]]; then
                       # Construct the new image name with the new registry
                       new_image="quay.io/openshift-pipeline/$match_word:next"
                       echo "Pushing Docker image: $new_image"
