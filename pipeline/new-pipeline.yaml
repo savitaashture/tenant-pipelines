@@ -46,6 +46,9 @@ spec:
 
               for container_image in "${container_images[@]}"; do
                 image=$(echo "$container_image" | sed "s|quay.io/redhat-user-workloads/tekton-ecosystem-tenant|quay.io/openshift-pipeline|")
-                new_image=$(echo "$image" | sed 's/@sha256:.*//'):next
+                image_no_sha=$(echo "$image" | sed 's/@sha256:.*//')
+                IFS="/" read -r -a parts <<< "$image_no_sha"
+                new_image="quay.io/openshift-pipeline/${parts[2]}-${parts[3]}:next"
+                echo "$new_image"
                 skopeo copy docker://"$container_image" docker://"$new_image" --all --preserve-digests
               done
