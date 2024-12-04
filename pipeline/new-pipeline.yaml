@@ -38,42 +38,13 @@ spec:
               get-resource "snapshot" $(params.SNAPSHOT) > /tmp/snapshot.json
               cat /tmp/snapshot.json
               file="/tmp/snapshot.json"
-              match_words=("openshift-pipelines-pipelines-entrypoint-rhel9" "openshift-pipelines-pipelines-workingdirinit-rhel9" "openshift-pipelines-pipelines-resolvers-rhel9"
-              "openshift-pipelines-pipelines-controller-rhel9" "openshift-pipelines-pipelines-events-rhel9" "openshift-pipelines-pipelines-nop-rhel9" "openshift-pipelines-pipelines-webhook-rhel9"
-              "openshift-pipelines-pipelines-chains-controller-rhel9"
-              "openshift-pipelines-pipelines-cli-tkn-rhel9"
-              "openshift-pipelines-pipelines-hub-ui-rhel9" "openshift-pipelines-pipelines-hub-api-rhel9" "openshift-pipelines-pipelines-hub-db-migration-rhel9"
-              "openshift-pipelines-pipelines-triggers-webhook-rhel9" "openshift-pipelines-pipelines-triggers-controller-rhel9" "openshift-pipelines-pipelines-triggers-core-interceptors-rhel9" "openshift-pipelines-pipelines-triggers-eventlistenersink-rhel9"
-              "openshift-pipelines-pipelines-manual-approval-gate-controller-rhel9" "openshift-pipelines-pipelines-manual-approval-gate-webhook-rhel9"
-              "openshift-pipelines-pipelines-console-plugin-rhel9"
-              "openshift-pipelines-pipelines-pipelines-as-code-controller-rhel9" "openshift-pipelines-pipelines-pipelines-as-code-webhook-rhel9" "openshift-pipelines-pipelines-pipelines-as-code-watcher-rhel9" "openshift-pipelines-pipelines-pipelines-as-code-cli-rhel9"
-              "openshift-pipelines-pipelines-cache-rhel9")
               container_images=()
               while IFS= read -r image; do
               container_images+=("$image")
               done < <(jq -r '.spec.components[].containerImage' "$file")
+
+
               for container_image in "${container_images[@]}"; do
-                # Extract the word before sha256 to match with the container image to push
-                # last_word=$(echo "$container_image" | sed -E 's|.*/([^/]+)@sha256:.*|\1|')
-                extracted=$(echo "$container_image" | sed -E 's|.*/([^/]+)/([^@]+)@sha256:.*|\1 \2|')
-                firstWord=$(echo "$extracted" | awk '{print $1}')
-                secondWord=$(echo "$extracted" | awk '{print $2}')
-                # sha256=$(echo "$container_image" | sed -E 's|.*@sha256:([^ ]*)|\1|')
-                
-                echo "before"
-                echo $extracted
-                echo $firstWord
-                echo $secondWord
-                echo "after"
-                for match_word in "${match_words[@]}"; do
-                  # Check if the word before sha256 matches the specified match_word
-                  # if [[ "$match_word" =~ $last_word ]]; then
-                  echo "inside for loop"
-                  if [[ "$match_word" =~ $firstWord && "$match_word" =~ $secondWord ]]; then
-                      # Construct the new image name with the new registry
-                      new_image="quay.io/openshift-pipeline/$match_word:next"
-                      echo "Pushing Docker image: $new_image"
-                      skopeo copy docker://"$container_image" docker://"$new_image" --all --preserve-digests
-                  fi
-                done
+                new_image=$(echo "$container_image" | sed "s|quay.io/redhat-user-workloads/tekton-ecosystem-tenant/|quay.io/openshift-pipeline|"):next
+                skopeo copy docker://"$container_image" docker://"$new_image" --all --preserve-digests
               done
